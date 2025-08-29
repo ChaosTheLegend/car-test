@@ -51,7 +51,7 @@ const loader = new GLTFLoader(loadingManager)
 let carModel
 let hover
 
-loader.load('/resources/car.glb', (gltf) => {
+loader.load(import.meta.env.BASE_URL + 'resources/car.glb', (gltf) => {
   carModel = gltf.scene
   carModel.scale.set(0.01, 0.01, 0.01)
   carModel.position.set(0, 0, 0)
