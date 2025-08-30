@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader'
 import { initHoverManager } from './hoverManager.js'
+import { createOnEnter, createOnLeave, createOnClick } from './handlers/carHoverHandlers.js'
 
 // Create container
 const app = document.querySelector('#app')
@@ -58,39 +59,15 @@ loader.load(import.meta.env.BASE_URL + 'resources/car.glb', (gltf) => {
   scene.add(carModel)
 
   // Setup hover manager when model is ready
+  // Import shared handlers and bind to this model
   hover = initHoverManager({
     camera,
     rendererDom: renderer.domElement,
     targetObject: carModel,
     panelText: 'some stupid car',
-    onEnter: () => {
-      carModel.traverse((child) => {
-        if (child.isMesh) {
-          if (!child.material || !('emissive' in child.material)) return
-          child.material.emissive = new THREE.Color(0x666666)
-        }
-      })
-    },
-    onLeave: () => {
-      carModel.traverse((child) => {
-        if (child.isMesh) {
-          if (!child.material || !('emissive' in child.material)) return
-          child.material.emissive = new THREE.Color(0x000000)
-        }
-      })
-    },
-    onClick: (intersect) => {
-      // Example click behavior: log and briefly flash emissive
-      console.log('Car clicked', intersect)
-      carModel.traverse((child) => {
-        if (child.isMesh && child.material && 'emissive' in child.material) {
-          child.material.emissive = new THREE.Color(0x22aa22)
-          setTimeout(() => {
-            child.material.emissive = new THREE.Color(0x666666)
-          }, 150)
-        }
-      })
-    }
+    onEnter: createOnEnter(carModel),
+    onLeave: createOnLeave(carModel),
+    onClick: createOnClick(carModel)
   })
 
   // Expose API to the outside for custom click handling
