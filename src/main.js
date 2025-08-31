@@ -1,9 +1,9 @@
 import './style.css'
 import * as THREE from 'three'
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
-import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { initHoverManager } from './hoverManager.js'
 import { createOnEnter, createOnLeave, createOnClick } from './handlers/carHoverHandlers.js'
+import { initScene } from './sceneSetup.js'
 
 // Create container
 const app = document.querySelector('#app')
@@ -14,37 +14,12 @@ app.style.width = '100vw'
 app.style.height = '100vh'
 app.style.overflow = 'hidden'
 
-// Scene
-const scene = new THREE.Scene()
-scene.background = new THREE.Color(0x20232a)
-
-// Camera
-const camera = new THREE.PerspectiveCamera(
-  60,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-)
-camera.position.set(2, 2, 3)
-
-// Renderer
-const renderer = new THREE.WebGLRenderer({ antialias: true })
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-renderer.setSize(window.innerWidth, window.innerHeight)
-app.appendChild(renderer.domElement)
-
-// add orbit controls
-const controls = new OrbitControls(camera, renderer.domElement)
-controls.enableDamping = true
-controls.dampingFactor = 0.05
-
-// Resize handling
-function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight
-  camera.updateProjectionMatrix()
-  renderer.setSize(window.innerWidth, window.innerHeight)
-}
-window.addEventListener('resize', onWindowResize)
+// Initialize shared scene (background, camera, renderer, controls, ground, lights)
+const { scene, camera, renderer, controls } = await initScene(app, {
+  // You can override defaults here, e.g.:
+  // background: 0x000000,
+  // lights: { directional: { intensity: 1.2 } }
+})
 
 // Load car model
 const loadingManager = new THREE.LoadingManager()
@@ -74,25 +49,6 @@ loader.load(import.meta.env.BASE_URL + 'resources/car.glb', (gltf) => {
   window.setCarClickHandler = (fn) => hover && hover.setOnClick(fn)
   window.triggerCarClick = () => hover && hover.triggerClick()
 })
-
-// Ground plane for context
-const plane = new THREE.Mesh(
-  new THREE.PlaneGeometry(10, 10),
-  new THREE.MeshStandardMaterial({ color: 0x333842, roughness: 1 })
-)
-plane.rotation.x = -Math.PI / 2
-plane.position.y = -0.75
-plane.receiveShadow = true
-scene.add(plane)
-
-// Lights
-const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6)
-hemi.position.set(0, 1, 0)
-scene.add(hemi)
-
-const dir = new THREE.DirectionalLight(0xffffff, 0.8)
-dir.position.set(3, 5, 2)
-scene.add(dir)
 
 // Animation loop
 function animate() {
