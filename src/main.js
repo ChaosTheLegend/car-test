@@ -27,10 +27,10 @@ const loader = new GLTFLoader(loadingManager)
 let carModel
 let hover
 
-loader.load(import.meta.env.BASE_URL + 'resources/car.glb', (gltf) => {
+loader.load(import.meta.env.BASE_URL + 'resources/car1.glb', (gltf) => {
   carModel = gltf.scene
-  carModel.scale.set(0.01, 0.01, 0.01)
-  carModel.position.set(0, 0, 0)
+  carModel.scale.set(1 , 1, 1)
+  carModel.position.set(0, 0, 2.5)
   scene.add(carModel)
 
   // Setup hover manager when model is ready
