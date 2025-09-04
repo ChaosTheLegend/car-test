@@ -4,9 +4,12 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { initHoverManager } from './hoverManager.js'
 import { createOnEnter, createOnLeave, createOnClick } from './handlers/carHoverHandlers.js'
 import { initScene } from './sceneSetup.js'
+import TWEEN from "@tweenjs/tween.js";
 
 // Create container
 const app = document.querySelector('#app')
+const tweenGroup = new TWEEN.Group()
+
 app.innerHTML = ''
 app.style.margin = '0'
 app.style.padding = '0'
@@ -16,9 +19,7 @@ app.style.overflow = 'hidden'
 
 // Initialize shared scene (background, camera, renderer, controls, ground, lights)
 const { scene, camera, renderer, controls } = await initScene(app, {
-  // You can override defaults here, e.g.:
-  // background: 0x000000,
-  // lights: { directional: { intensity: 1.2 } }
+
 })
 
 // Load car model
@@ -27,7 +28,7 @@ const loader = new GLTFLoader(loadingManager)
 let carModel
 let hover
 
-loader.load(import.meta.env.BASE_URL + 'resources/car1.glb', (gltf) => {
+loader.load(import.meta.env.BASE_URL + 'resources/car2.glb', (gltf) => {
   carModel = gltf.scene
   carModel.scale.set(1 , 1, 1)
   carModel.position.set(0, 0, 2.5)
@@ -39,10 +40,10 @@ loader.load(import.meta.env.BASE_URL + 'resources/car1.glb', (gltf) => {
     camera,
     rendererDom: renderer.domElement,
     targetObject: carModel,
-    panelText: 'some stupid car',
+    panelText: 'сдесь могла бы быть ваша реклама',
     onEnter: createOnEnter(carModel),
     onLeave: createOnLeave(carModel),
-    onClick: createOnClick(carModel)
+    onClick: createOnClick(carModel, tweenGroup)
   })
 
   // Expose API to the outside for custom click handling
@@ -54,6 +55,7 @@ loader.load(import.meta.env.BASE_URL + 'resources/car1.glb', (gltf) => {
 function animate() {
   requestAnimationFrame(animate)
   controls.update()
+    tweenGroup.update()
 
   if (hover) hover.tick()
 

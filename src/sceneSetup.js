@@ -39,7 +39,7 @@ export async function initScene(container, userConfig = {}) {
           hemisphere: {
               skyColor: 0xffffff,
               groundColor: 0x444444,
-              intensity: 0.6,
+              intensity: 5,
               position: {x: 0, y: 1, z: 0},
               enabled: true
           },

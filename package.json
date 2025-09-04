@@ -10,6 +10,7 @@
     "deploy": "vite build"
   },
   "dependencies": {
+    "@tweenjs/tween.js": "^25.0.0",
     "three": "^0.168.0"
   },
   "devDependencies": {
