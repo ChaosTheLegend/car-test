@@ -28,6 +28,11 @@ const loader = new GLTFLoader(loadingManager)
 let carModel
 let hover
 
+loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
+    const progress = (itemsLoaded / itemsTotal) * 100;
+    console.log(`Loading ${url}: ${progress}%`);
+}
+
 loader.load(import.meta.env.BASE_URL + 'resources/car2.glb', (gltf) => {
   carModel = gltf.scene
   carModel.scale.set(1 , 1, 1)
